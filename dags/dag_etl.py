@@ -7,12 +7,8 @@ from extract import main as extract_main
 from transformation import transform_data as transformation_main
 from load import main as load_main
 
-# Configurar logging de Airflow
 logger = logging.getLogger("airflow.task")
 
-# -----------------------------
-# Definir el DAG
-# -----------------------------
 @dag(
     dag_id="etl_workflow",
     start_date=datetime(2025, 8, 1),
@@ -53,9 +49,6 @@ def etl_pipeline():
             logger.error(f"Load failed: {e}")
             raise
 
-    # -----------------------------
-    # Configurar dependencias
-    # -----------------------------
     extract_task = extract()
     transform_task = transform()
     load_task = load()

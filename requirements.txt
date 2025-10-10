@@ -5,3 +5,4 @@ pydrive
 matplotlib<3.9.0
 cryptography
 python-dotenv
+scipy<1.10.0

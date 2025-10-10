@@ -6,7 +6,7 @@ from config import get_db_connection
 # Configuración para Docker/Airflow
 TABLE_NAME = 'grammy_awards_cleaned'
 CSV_FILE_PATH = "/opt/airflow/dags/merged_grammy_spotify_clean.csv"
-FOLDER_ID = "1_2yFobHWeBehntIZbYCdFN-q17t9tQ_s"  # Folder ID de Google Drive
+FOLDER_ID = "1_2yFobHWeBehntIZbYCdFN-q17t9tQ_s"
 
 
 def load_to_database():
@@ -65,10 +65,7 @@ logger = logging.getLogger("airflow.task")
 
 
 def upload_to_drive():
-    """
-    Sube el archivo CSV limpio a Google Drive usando PyDrive2
-    NOTA: Requiere que credentials.json haya sido generado previamente con authenticate_drive.py
-    """
+
     try:
         # Configuración de rutas para Docker/Airflow
         CLIENT_SECRET_PATH = "/opt/airflow/dags/client_secret.json"
@@ -129,7 +126,6 @@ def upload_to_drive():
         raise
 
 def main():
-    """Función principal que ejecuta la carga a BD y Google Drive"""
     load_to_database()
     upload_to_drive()
 

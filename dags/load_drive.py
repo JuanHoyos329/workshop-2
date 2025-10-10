@@ -3,10 +3,8 @@ from pydrive2.drive import GoogleDrive
 import os
 
 CLIENT_SECRET_PATH = "/opt/airflow/dags/client_secret.json"
-
 CSV_FILE_PATH = "/opt/airflow/dags/merged_grammy_spotify_clean.csv" 
 
-# Pass the client secret file explicitly as a settings dict to avoid loading a settings.yaml string
 def main():
     gauth = GoogleAuth(settings={
         "client_config_backend": "file",

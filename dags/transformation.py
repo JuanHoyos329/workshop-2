@@ -3,17 +3,11 @@ import re
 import logging
 from config import get_db_connection
 
-# -----------------------------
-# Configuración básica
-# -----------------------------
 SPOTIFY_CSV_PATH = "/opt/airflow/dags/spotify_dataset.csv"
 OUTPUT_CSV_PATH = "/opt/airflow/dags/merged_grammy_spotify_clean.csv"
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# -----------------------------
-# Función de normalización
-# -----------------------------
 def normalize_text(s):
     if pd.isna(s):
         return ''
@@ -22,9 +16,6 @@ def normalize_text(s):
     s = re.sub(r'\s+', ' ', s)
     return s
 
-# -----------------------------
-# Función principal
-# -----------------------------
 def transform_data():
     try:
         logging.info("Cargando dataset de Spotify...")
@@ -52,9 +43,6 @@ def transform_data():
         # Filtrar años
         df_grammy = df_grammy[df_grammy['year'] >= 1958]
 
-        # -----------------------------
-        # MERGE INTELIGENTE entre Grammy y Spotify
-        # -----------------------------
         logging.info("Realizando merge inteligente entre Grammy y Spotify...")
         
         # Clasificar categorías por tipo (canción vs álbum/otros)
@@ -108,26 +96,22 @@ def transform_data():
         logging.info(f"Merge completado. Registros Grammy: {len(df_grammy)}, Registros después del merge: {len(df_merged)}")
         logging.info(f"Registros con datos de Spotify: {df_merged['track_id'].notna().sum() if 'track_id' in df_merged.columns else 0}")
         
-        # -----------------------------
-        # Limpiar columnas innecesarias
-        # -----------------------------
         columns_to_drop = [
-            'id',                    # ID no necesario
-            'category_norm',         # Columnas de normalización temporal
+            'id',                    
+            'category_norm',         
             'nominee_norm', 
             'artist_norm',
             'track_name_norm',
             'album_name_norm', 
             'artists_norm',
-            'Unnamed: 0',           # Columna de índice de pandas
-            'track_id'              # ID de Spotify no necesario
+            'Unnamed: 0',           
+            'track_id',             
+            'artist'                
         ]
         
         df_merged = df_merged.drop(columns=[col for col in columns_to_drop if col in df_merged.columns], errors='ignore')
         
-        # -----------------------------
         # Manejo de valores NaN (limpieza de datos)
-        # -----------------------------
         logging.info("Limpiando valores NaN...")
         
         # Identificar columnas numéricas de Spotify que existen en el DataFrame
@@ -152,11 +136,92 @@ def transform_data():
             df_merged['workers'] = df_merged['workers'].apply(lambda x: x[:255] if isinstance(x, str) and len(x) > 255 else x)
             logging.info("✅ Valores largos en 'workers' truncados a 255 caracteres")
         
-        # Guardar CSV final
-        df_merged.to_csv(OUTPUT_CSV_PATH, index=False)
-        logging.info(f"💾 CSV con merge guardado en {OUTPUT_CSV_PATH}")
-        logging.info(f"📊 Total columnas: {len(df_merged.columns)}")
-        logging.info(f"📊 Columnas finales: {df_merged.columns.tolist()}")
+        # TRANSFORMACIONES PARA ANÁLISIS DE DISCOGRÁFICA
+        logging.info("Aplicando transformaciones para análisis de discográfica...")
+        
+        # Crear explicit_label ANTES de filtrar
+        df_merged['explicit_label'] = df_merged['explicit'].apply(
+            lambda x: 'Explicit' if x == True else 'Clean'
+        )
+        
+        # FILTRAR: Solo mantener registros con datos COMPLETOS (Grammy + Spotify)
+        # Estos son los datos útiles para decisiones estratégicas
+        df_clean = df_merged[
+            (df_merged['popularity'] > 0) &   
+            (df_merged['track_genre'] != '') &        
+            (df_merged['duration_ms'] > 0) &          
+            (df_merged['artists'] != '') &           
+            (df_merged['track_name'] != '')           
+        ].copy()
+        
+        # Eliminar la columna explicit original (ya tenemos explicit_label)
+        df_clean = df_clean.drop(columns=['explicit'], errors='ignore')
+        
+        initial_count = len(df_merged)
+        final_count = len(df_clean)
+        logging.info(f"Registros útiles: {final_count} de {initial_count} ({round(final_count/initial_count*100, 1)}%)")
+        
+        # Columnas numéricas calculadas
+        df_clean['duration_minutes'] = (df_clean['duration_ms'] / 60000).round(2)
+        df_clean['decade'] = (df_clean['year'] // 10) * 10
+        
+        # Columnas categóricas (ahora SIN valores Unknown porque ya filtramos)
+        df_clean['popularity_range'] = pd.cut(
+            df_clean['popularity'],
+            bins=[0, 40, 60, 80, 100],
+            labels=['Low', 'Moderate', 'Popular', 'Very Popular'],
+            include_lowest=True
+        )
+        
+        df_clean['energy_level'] = pd.cut(
+            df_clean['energy'],
+            bins=[0, 0.4, 0.7, 1],
+            labels=['Low Energy', 'Medium Energy', 'High Energy'],
+            include_lowest=True
+        )
+        
+        df_clean['dance_level'] = pd.cut(
+            df_clean['danceability'],
+            bins=[0, 0.5, 0.7, 1],
+            labels=['Low Danceability', 'Danceable', 'Very Danceable'],
+            include_lowest=True
+        )
+        
+        df_clean['duration_category'] = pd.cut(
+            df_clean['duration_minutes'],
+            bins=[0, 2.5, 3.5, 5, float('inf')],
+            labels=['Very Short (<2.5m)', 'Short (2.5-3.5m)', 'Medium (3.5-5m)', 'Long (5+m)'],
+            include_lowest=True
+        )
+        
+        df_clean['mood'] = pd.cut(
+            df_clean['valence'],
+            bins=[0, 0.4, 0.6, 1],
+            labels=['Sad/Negative', 'Neutral', 'Happy/Positive'],
+            include_lowest=True
+        )
+        
+        df_clean['acousticness_level'] = pd.cut(
+            df_clean['acousticness'],
+            bins=[0, 0.3, 0.7, 1],
+            labels=['Electronic', 'Hybrid', 'Acoustic'],
+            include_lowest=True
+        )
+        
+        df_clean['tempo_category'] = pd.cut(
+            df_clean['tempo'],
+            bins=[0, 90, 120, 150, 300],
+            labels=['Slow', 'Moderate', 'Fast', 'Very Fast'],
+            include_lowest=True
+        )
+        
+        # Guardar CSV final limpio y completo
+        df_clean.to_csv(OUTPUT_CSV_PATH, index=False)
+        
+        # Estadísticas finales
+        logging.info(f"✅ CSV saved: {len(df_clean)} rows, {len(df_clean.columns)} columns")
+        logging.info(f"   Dataset listo para análisis estratégico de discográfica")
+        logging.info(f"   Todos los registros tienen datos completos Grammy + Spotify")
 
         conn.close()
         logging.info("Conexión a base de datos cerrada.")
