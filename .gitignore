@@ -1,0 +1,45 @@
+# Logs de Airflow
+logs/
+*.log
+
+# Python cache
+__pycache__/
+dags/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Archivos sensibles - NUNCA SUBIR A GIT
+dags/client_secret*.json
+dags/credentials.json
+dags/service_account*.json
+*.json
+!docker-compose.json
+!package.json
+
+# Variables de entorno
+.env
+.env.local
+.env.*.local
+
+# Configuración local
+config.local.py
+*_local.py
+
+# Datos sensibles
+*.xlsx
+*.db
+*.sqlite
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db

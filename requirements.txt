@@ -1,0 +1,7 @@
+pandas
+mysql-connector-python
+sqlalchemy<2.0
+pydrive
+matplotlib<3.9.0
+cryptography
+python-dotenv
