@@ -1,25 +1,26 @@
-# 🎵 Workshop-2: Pipeline ETL de Análisis Musical Grammy & Spotify
+# 🎵 Workshop-2: ETL Pipeline for Musical Analysis — Grammy & Spotify
 
-## 📋 Descripción del Proyecto
+## 📋 Project Description
 
-Este proyecto implementa un **pipeline ETL completo** que integra datos de los **Premios Grammy** y **Spotify** para realizar análisis musical estratégico. El sistema automatiza la extracción, transformación y carga de datos utilizando **Apache Airflow**, Docker, y MySQL, culminando en un dashboard interactivo de Power BI.
+This project implements a **complete ETL pipeline** that integrates data from the **Grammy Awards** and **Spotify** to perform strategic musical analysis.
+The system automates data extraction, transformation, and loading using **Apache Airflow**, **Docker**, and **MySQL**, culminating in an interactive **Power BI dashboard**.
 
-### 🎯 Objetivos
+### 🎯 Objectives
 
-- Automatizar el proceso de integración de datos Grammy y Spotify
-- Realizar análisis exploratorio de datos (EDA) sobre características musicales
-- Identificar patrones de éxito en la industria musical
-- Proveer insights estratégicos para decisiones de discográficas
-- Crear un pipeline de datos escalable y reproducible
+* Automate the integration process of Grammy and Spotify data
+* Perform exploratory data analysis (EDA) on musical features
+* Identify success patterns within the music industry
+* Provide strategic insights for record label decision-making
+* Build a scalable and reproducible data pipeline
 
 ---
 
-## 🏗️ Arquitectura del Sistema
+## 🏗️ System Architecture
 
 ```
 ┌─────────────────┐
 │   Data Sources  │
-│  Grammy + Spotify│
+│ Grammy + Spotify│
 └────────┬────────┘
          │
          ▼
@@ -30,7 +31,7 @@ Este proyecto implementa un **pipeline ETL completo** que integra datos de los *
          ▼
 ┌─────────────────┐
 │ TRANSFORMATION  │  ← transformation.py
-│  - Normalización │
+│  - Normalization│
 │  - Merge Data   │
 │  - Feature Eng. │
 └────────┬────────┘
@@ -44,25 +45,25 @@ Este proyecto implementa un **pipeline ETL completo** que integra datos de los *
          │
          ▼
 ┌─────────────────┐
-│  ORQUESTACIÓN   │  ← Apache Airflow
+│  ORCHESTRATION  │  ← Apache Airflow
 │   (dag_etl.py)  │
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│  VISUALIZACIÓN  │  ← Power BI Dashboard
-│   & ANÁLISIS    │     eda.ipynb
+│  VISUALIZATION  │  ← Power BI Dashboard
+│   & ANALYSIS    │     eda.ipynb
 └─────────────────┘
 ```
 
 ---
 
-## 📂 Estructura del Proyecto
+## 📂 Project Structure
 
 ```
 workshop-2/
 │
-├── dags/                           # Directorio de Airflow
+├── dags/                           # Airflow directory
 │   ├── dag_etl.py                 
 │   ├── extract.py                
 │   ├── transformation.py          
@@ -91,302 +92,314 @@ workshop-2/
 
 ---
 
-## 🔧 Tecnologías Utilizadas
+## 🔧 Technologies Used
 
-### Backend & Orquestación
-- **Apache Airflow 2.5.1** - Orquestación del pipeline ETL
-- **Python 3.x** - Lenguaje principal
-- **Pandas** - Manipulación y análisis de datos
-- **SQLAlchemy** - ORM para bases de datos
+### Backend & Orchestration
 
-### Infraestructura
-- **Docker & Docker Compose** - Containerización
-- **PostgreSQL** - Metadata de Airflow
-- **MySQL 8.0** - Base de datos principal
-- **Redis** - Message broker para Celery
+* **Apache Airflow 2.5.1** – ETL pipeline orchestration
+* **Python** – Main programming language
+* **Pandas** – Data manipulation and analysis
+* **SQLAlchemy** – ORM for databases
 
-### Almacenamiento & APIs
-- **Google Drive API** - Almacenamiento en la nube
-- **PyDrive2** - Cliente Python para Google Drive
+### Infrastructure
 
-### Análisis & Visualización
-- **Jupyter Notebook** - EDA interactivo
-- **Matplotlib & Seaborn** - Visualizaciones
-- **SciPy** - Análisis estadístico
-- **Power BI** - Dashboard empresarial
+* **Docker & Docker Compose** – Containerization
+* **MySQL 8.0** – Main relational database
+* **Redis** – Message broker for Celery
+
+### Storage & APIs
+
+* **Google Drive API** – Cloud storage integration
+* **PyDrive2** – Python client for Google Drive
+
+### Analysis & Visualization
+
+* **Jupyter Notebook** – Interactive EDA
+* **Matplotlib & Seaborn** – Data visualization
+* **SciPy** – Statistical analysis
+* **Power BI** – Business intelligence dashboard
 
 ---
 
-## 🚀 Instalación y Configuración
+## 🚀 Installation & Setup
 
-### Prerrequisitos
+### Prerequisites
 
-- Docker Desktop instalado
-- Python 3.8+
-- Cuenta de Google Cloud (para Google Drive API)
-- 4GB RAM mínimo
-- 10GB espacio en disco
+* Docker Desktop installed
+* Python
+* Google Cloud account (for Drive API)
+* Minimum 4GB RAM
+* 10GB disk space
 
-### 1. Clonar el Repositorio
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/JuanHoyos329/workshop-2.git
 cd workshop-2
 ```
 
-### 2. Configurar Variables de Entorno
+### 2. Configure Environment Variables
 
-Crear archivo `.env` en la raíz del proyecto:
+Create a `.env` file in the project root:
 
 ```env
 AIRFLOW_UID=50000
 AIRFLOW_IMAGE_NAME=apache/airflow:2.5.1
 ```
 
-### 3. Configurar Google Drive API
+### 3. Configure Google Drive API
 
-1. Ir a [Google Cloud Console](https://console.cloud.google.com/)
-2. Crear un nuevo proyecto
-3. Habilitar **Google Drive API**
-4. Crear credenciales OAuth 2.0
-5. Descargar `client_secret.json` y colocarlo en `dags/`
-6. Ejecutar autenticación:
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project
+3. Enable **Google Drive API**
+4. Create OAuth 2.0 credentials
+5. Download `client_secret.json` and place it in `dags/`
+6. Run authentication:
 
 ```bash
 python dags/authenticate_drive.py
 ```
 
-### 4. Instalar Dependencias Python (Opcional - Local)
+### 4. Install Python Dependencies (Optional - Local)
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 5. Iniciar Servicios con Docker
+### 5. Start Services with Docker
 
 ```bash
-# Inicializar Airflow (primera vez)
+# Initialize Airflow (first time only)
 docker-compose up airflow-init
 
-# Levantar todos los servicios
+# Start all services
 docker-compose up -d
 
-# Verificar estado de contenedores
+# Check container status
 docker-compose ps
 ```
 
-### 6. Acceder a las Interfaces
+### 6. Access Interfaces
 
-- **Airflow UI**: http://localhost:8080
-  - Usuario: `airflow`
-  - Contraseña: `airflow`
-  
-- **Flower (Celery Monitor)**: http://localhost:5555
+* **Airflow UI**: [http://localhost:8080](http://localhost:8080)
 
-- **MySQL**: 
-  - Host: `localhost`
-  - Puerto: `3307`
-  - Usuario: `airflow`
-  - Contraseña: `airflow`
-  - Base de datos: `grammy_db`
+  * User: `airflow`
+  * Password: `airflow`
+
+* **Flower (Celery Monitor)**: [http://localhost:5555](http://localhost:5555)
+
+* **MySQL**:
+
+  * Host: `localhost`
+  * Port: `3307`
+  * User: `airflow`
+  * Password: `airflow`
+  * Database: `grammy_db`
 
 ---
 
-## 🔄 Pipeline ETL - Flujo de Trabajo
+## 🔄 ETL Pipeline — Workflow
 
 ### DAG: `etl_workflow`
 
-**Configuración:**
-- Inicio: 1 de agosto de 2025
-- Frecuencia: Diaria (`@daily`)
-- Catchup: Habilitado
-- Max Active Runs: 1
+**Configuration:**
 
-### Tareas del Pipeline
+* Start Date: August 1, 2025
+* Schedule: Daily (`@daily`)
+* Catchup: Enabled
+* Max Active Runs: 1
 
-#### 1️⃣ **Extracción** (`extract.py`)
+### Pipeline Tasks
 
-**Función:** Cargar datos Grammy a MySQL
+#### 1️⃣ **Extraction** (`extract.py`)
 
-- Lee `the_grammy_awards.csv`
-- Detecta tipos de datos automáticamente
-- Crea tabla `grammy_awards` en MySQL
-- Inserta registros con manejo de valores nulos
-- **Resultado:** Tabla MySQL con datos Grammy
+**Function:** Load Grammy data into MySQL
 
-#### 2️⃣ **Transformación** (`transformation.py`)
+* Reads `the_grammy_awards.csv`
+* Detects data types automatically
+* Creates table `grammy_awards` in MySQL
+* Inserts records with null handling
+* **Result:** Grammy data table in MySQL
 
-**Función:** Merge inteligente y feature engineering
+#### 2️⃣ **Transformation** (`transformation.py`)
 
-**Pasos:**
-1. **Carga de datos:**
-   - Spotify dataset desde CSV
-   - Grammy dataset desde MySQL
+**Function:** Intelligent merge and feature engineering
 
-2. **Limpieza:**
-   - Eliminación de duplicados
-   - Normalización de texto (lowercase, espacios)
-   - Manejo de colaboraciones (feat., &, and)
+**Steps:**
 
-3. **Merge inteligente:**
-   - Clasificación de categorías (canción vs álbum)
-   - Coincidencia exacta y parcial
-   - Mantener versión más popular de cada track
+1. **Load Data**
 
-4. **Feature Engineering:**
-   - `explicit_label`: Explicit/Clean
-   - `duration_minutes`: Duración en minutos
-   - `decade`: Década de la canción
-   - `popularity_range`: Categorías de popularidad
-   - `energy_level`: Nivel de energía
-   - `dance_level`: Nivel de bailabilidad
-   - `duration_category`: Categoría por duración
-   - `mood`: Estado de ánimo (Sad/Neutral/Happy)
-   - `acousticness_level`: Electronic/Hybrid/Acoustic
-   - `tempo_category`: Slow/Moderate/Fast/Very Fast
+   * Spotify dataset from CSV
+   * Grammy dataset from MySQL
 
-5. **Filtrado:**
-   - Solo registros con datos completos (Grammy + Spotify)
-   - Elimina registros sin información útil
+2. **Cleaning**
 
-**Resultado:** `merged_grammy_spotify_clean.csv` con datos listos para análisis
+   * Remove duplicates
+   * Normalize text (lowercase, trim spaces)
+   * Handle collaborations (feat., &, and)
 
-#### 3️⃣ **Carga** (`load.py`)
+3. **Smart Merge**
 
-**Función:** Persistencia de datos procesados
+   * Classify categories (song vs album)
+   * Exact and partial matching
+   * Keep most popular version per track
 
-**Operaciones:**
-1. **Carga a MySQL:**
-   - Tabla: `grammy_awards_cleaned`
-   - Método: SQLAlchemy `to_sql`
-   - Estrategia: Replace (sobrescribe tabla)
-   - Performance: ~500 registros por chunk
+4. **Feature Engineering**
 
-2. **Upload a Google Drive:**
-   - Archivo: `merged_grammy_spotify_clean.csv`
-   - Autenticación: OAuth 2.0
-   - Refresh automático de tokens
-   - Folder ID configurable
+   * `explicit_label`: Explicit/Clean
+   * `duration_minutes`: Duration in minutes
+   * `decade`: Song decade
+   * `popularity_range`: Popularity categories
+   * `energy_level`: Energy level
+   * `dance_level`: Danceability level
+   * `duration_category`: Duration category
+   * `mood`: Mood (Sad/Neutral/Happy)
+   * `acousticness_level`: Electronic/Hybrid/Acoustic
+   * `tempo_category`: Slow/Moderate/Fast/Very Fast
 
-**Resultado:** Datos disponibles en DB y Cloud
+5. **Filtering**
+
+   * Keep only complete records (Grammy + Spotify)
+   * Remove rows without relevant information
+
+**Result:** `merged_grammy_spotify_clean.csv` ready for analysis
+
+#### 3️⃣ **Load** (`load.py`)
+
+**Function:** Persist processed data
+
+**Operations:**
+
+1. **Load into MySQL**
+
+   * Table: `grammy_awards_cleaned`
+   * Method: SQLAlchemy `to_sql`
+   * Strategy: Replace (overwrite table)
+   * Performance: ~500 rows per chunk
+
+2. **Upload to Google Drive**
+
+   * File: `merged_grammy_spotify_clean.csv`
+   * Auth: OAuth 2.0
+   * Automatic token refresh
+   * Configurable folder ID
+
+**Result:** Data available in DB and cloud
 
 ---
 
-## 📊 Análisis Exploratorio de Datos (EDA)
+## 📊 Exploratory Data Analysis (EDA)
 
-El notebook `eda.ipynb` contiene un análisis completo en **inglés** con las siguientes secciones:
+The `eda.ipynb` notebook contains a full **English** analysis with the following structure:
 
-### Estructura del EDA
+### EDA Structure
 
 1. **Data Loading**
-   - Carga de datasets Spotify y Grammy
-   - Validación de estructura
+
+   * Load Spotify and Grammy datasets
+   * Validate structure
 
 2. **Spotify Dataset Analysis**
-   - Overview de columnas y tipos
-   - Calidad de datos (nulos, duplicados)
-   - Estadísticas descriptivas
-   - Visualizaciones:
-     - Top 10 artistas más frecuentes
-     - Distribución de popularidad
-     - Comparación Explicit vs Non-Explicit
-     - Distribución de features de audio
-     - Matriz de correlación
+
+   * Column overview and data types
+   * Data quality (nulls, duplicates)
+   * Descriptive statistics
+   * Visualizations:
+
+     * Top 10 most frequent artists
+     * Popularity distribution
+     * Explicit vs Non-Explicit comparison
+     * Audio feature distributions
+     * Correlation matrix
 
 3. **Grammy Dataset Analysis**
-   - Estructura y tipos de datos
-   - Categorías más frecuentes
-   - Distribución temporal de premios
-   - Top 10 artistas con más nominaciones
-   - Distribución Winner vs Nominee
+
+   * Structure and data types
+   * Most common categories
+   * Temporal distribution of awards
+   * Top 10 most nominated artists
+   * Winner vs Nominee distribution
 
 4. **Outlier Detection**
-   - Z-score analysis (|Z| > 3)
-   - Boxplots para features numéricas
-   - Identificación de valores atípicos
+
+   * Z-score analysis (|Z| > 3)
+   * Boxplots for numerical features
+   * Identification of outliers
 
 5. **Key Findings Summary**
-   - Resumen estadístico completo
-   - Métricas clave de ambos datasets
 
-### Ejecutar el EDA
-
-```bash
-# Instalar dependencias
-pip install jupyter pandas matplotlib seaborn scipy
-
-# Iniciar Jupyter
-jupyter notebook eda.ipynb
-```
+   * Comprehensive statistical summary
+   * Key metrics from both datasets
 
 ---
 
-## 📈 Dashboard Power BI
+## 📈 Power BI Dashboard
 
-El archivo `dashboard/dashboard.pbix` contiene visualizaciones interactivas para análisis estratégico.
+The file `dashboard/dashboard.pbix` contains interactive visuals for strategic analysis.
 
-### Conexión a Datos
+### Data Connection
 
-1. Abrir `dashboard.pbix` con Power BI Desktop
-2. Configurar conexión MySQL:
-   - Server: `localhost:3307`
-   - Database: `grammy_db`
-   - Table: `grammy_awards_cleaned`
-3. Actualizar credenciales
-4. Refresh datos
+1. Open `dashboard.pbix` with Power BI Desktop
+2. Configure MySQL connection:
 
-### Visualizaciones Sugeridas
+   * Server: `localhost:3307`
+   * Database: `grammy_db`
+   * Table: `grammy_awards_cleaned`
+3. Update credentials
+4. Refresh data
 
-- 📊 KPIs: Total tracks, artistas, géneros
-- 📉 Tendencias temporales de popularidad
-- 🎸 Distribución por género musical
-- 🏆 Análisis de ganadores Grammy
-- 🎵 Características de audio por década
-- 🔥 Top artistas y tracks
+### Suggested Visuals
+
+* 📊 KPIs: Total tracks, artists, genres
+* 📉 Popularity trends over time
+* 🎸 Distribution by music genre
+* 🏆 Grammy winners analysis
+* 🎵 Audio features by decade
+* 🔥 Top artists and tracks
 
 ---
 
-## 🛠️ Comandos Útiles
+## 🛠️ Useful Commands
 
 ### Docker
 
 ```bash
-# Ver logs de Airflow
+# View Airflow logs
 docker-compose logs airflow-scheduler -f
 
-# Reiniciar servicios
+# Restart services
 docker-compose restart
 
-# Detener todo
+# Stop everything
 docker-compose down
 
-# Eliminar volúmenes (CUIDADO: borra datos)
+# Remove volumes (⚠️ deletes data)
 docker-compose down -v
 
-# Reconstruir imágenes
+# Rebuild images
 docker-compose build
 ```
 
 ### Airflow CLI
 
 ```bash
-# Listar DAGs
+# List DAGs
 docker-compose run airflow-worker airflow dags list
 
-# Trigger manual del DAG
+# Trigger DAG manually
 docker-compose run airflow-worker airflow dags trigger etl_workflow
 
-# Ver estado de tareas
+# Check task status
 docker-compose run airflow-worker airflow tasks list etl_workflow
 ```
 
 ### MySQL
 
 ```bash
-# Conectar a MySQL desde terminal
+# Connect to MySQL terminal
 docker exec -it workshop-2-mysql-1 mysql -u airflow -pairflow grammy_db
 
-# Consultas útiles
+# Useful queries
 SHOW TABLES;
 SELECT COUNT(*) FROM grammy_awards_cleaned;
 DESCRIBE grammy_awards_cleaned;
@@ -394,23 +407,14 @@ DESCRIBE grammy_awards_cleaned;
 
 ---
 
-## 📝 Configuración de Base de Datos
+## 📝 Database Configuration
 
-### Conexión MySQL en `config.py`
+### MySQL Connection in `config.py`
 
 ```python
 import mysql.connector
 
 def get_db():
-    return mysql.connector.connect(
-        host="mysql",  # Nombre del servicio en docker-compose
-        port=3306,
-        user="airflow",
-        password="airflow",
-        database="grammy_db"
-    )
-
-def get_db_connection():
     return mysql.connector.connect(
         host="mysql",
         port=3306,
@@ -422,68 +426,68 @@ def get_db_connection():
 
 ---
 
-## 🔍 Casos de Uso
+## 🔍 Use Cases
 
-### 1. Análisis de Tendencias Musicales
-- Identificar características de éxito
-- Evolución de géneros por década
-- Predicción de popularidad
+### 1. Music Trend Analysis
 
-### 2. Estrategia de Discográfica
-- Perfiles de artistas exitosos
-- Características óptimas por género
-- Timing de lanzamientos
+* Identify success characteristics
+* Genre evolution by decade
+* Popularity prediction
 
-### 3. Análisis de Premios
-- Correlación Grammy - Popularidad Spotify
-- Categorías más competitivas
-- Patrones de nominaciones
+### 2. Record Label Strategy
+
+* Successful artist profiles
+* Optimal features per genre
+* Release timing strategies
+
+### 3. Awards Analysis
+
+* Grammy–Spotify popularity correlation
+* Most competitive categories
+* Nomination patterns
 
 ### 4. Feature Engineering
-- Variables derivadas para ML
-- Segmentación de audiencias
-- Clustering de canciones similares
+
+* Derived variables for ML
+* Audience segmentation
+* Song similarity clustering
 
 ---
 
 ## 🐛 Troubleshooting
 
 ### Error: "No module named 'pandas'"
+
 ```bash
-# Verificar que requirements.txt esté en la imagen
 docker-compose build --no-cache
 docker-compose up -d
 ```
 
-### Error de conexión MySQL
-```bash
-# Verificar que MySQL esté healthy
-docker-compose ps
+### MySQL Connection Error
 
-# Revisar logs de MySQL
+```bash
+docker-compose ps
 docker-compose logs mysql
 ```
 
-### Error de autenticación Google Drive
-```bash
-# Re-autenticar
-python dags/authenticate_drive.py
+### Google Drive Authentication Error
 
-# Verificar que credentials.json existe
+```bash
+python dags/authenticate_drive.py
 ls -la dags/credentials.json
 ```
 
-### Airflow no aparece en http://localhost:8080
-```bash
-# Verificar puerto disponible
-netstat -an | findstr 8080  # Windows
+### Airflow Not Loading ([http://localhost:8080](http://localhost:8080))
 
-# Verificar logs
+```bash
+netstat -an | findstr 8080  # Windows
 docker-compose logs airflow-webserver
 ```
 
-## 👥 Autor
+---
 
-- **Juan Hoyos** - [@JuanHoyos329](https://github.com/JuanHoyos329)
+## 👥 Author
 
-**⭐ Si este proyecto te fue útil, considera darle una estrella en GitHub!**
+* **Juan Hoyos** – [@JuanHoyos329](https://github.com/JuanHoyos329)
+
+**⭐ If this project was helpful, consider giving it a star on GitHub!**
