@@ -141,7 +141,7 @@ def transform_data():
         
         # Crear explicit_label ANTES de filtrar
         df_merged['explicit_label'] = df_merged['explicit'].apply(
-            lambda x: 'Explicit' if x == True else 'Clean'
+            lambda x: 'Explicit' if x == True else 'No Explicit'
         )
         
         # FILTRAR: Solo mantener registros con datos COMPLETOS (Grammy + Spotify)
